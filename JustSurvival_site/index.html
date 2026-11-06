@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Just☣Survival</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@600;700&display=swap">
+<style>
+/* Layout: шапка-плашка → сетка [большой герой + лента карт | колонка: /join, донат, новости] → правила → подвал. Стиль JustMC: тёмно-синий, индиго, срезанные углы. */
+:root{
+  --bg:#131526; --panel:#1d2036; --panel-2:#262a45; --line:#33385c;
+  --fg:#eef0ff; --muted:#9097c2; --accent:#5b54f2; --accent-2:#7a74ff;
+  --tox:#7dff5a; --tox-dim:#2c5a22; --danger:#ff6a6a;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --cut:14px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.cut{clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,var(--cut) 100%,0 calc(100% - var(--cut)),0 var(--cut))}
+.mono{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--tox);outline-offset:2px}
+
+/* шапка */
+.top{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;background:var(--panel);padding:12px 16px;border-radius:18px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--f-display);font-weight:800;font-size:22px}
+.logo .bio{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--tox);font-size:20px;line-height:1}
+.logo b{color:var(--tox);font-weight:800}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{font-size:12px;text-decoration:none;color:var(--muted);padding:9px 14px;border-radius:9px}
+.nav a:hover{color:var(--fg);background:var(--panel-2)}
+.nav a.on{background:var(--accent);color:#fff}
+.top .chip{margin-left:auto;display:flex;align-items:center;gap:10px;background:var(--panel-2);padding:8px 12px;border-radius:12px;font-size:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--tox);box-shadow:0 0 8px var(--tox)}
+
+/* основная сетка */
+.main{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:22px;align-items:start}
+.left,.side{display:flex;flex-direction:column;gap:22px;min-width:0}
+
+.hero{position:relative;aspect-ratio:16/9;max-width:100%;background:#000 url(img/hero.jpg) center/cover no-repeat;overflow:hidden;--cut:22px}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,21,38,0) 35%,rgba(19,21,38,.92) 100%)}
+.hero-in{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:28px;display:flex;flex-direction:column;gap:12px}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{font-size:11px;padding:6px 10px;border-radius:7px;background:rgba(29,32,54,.85);color:var(--fg)}
+.tag.light{background:var(--fg);color:var(--bg)}
+.hero h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(30px,5.4vw,64px);line-height:1;letter-spacing:-.02em;text-wrap:balance}
+.hero h1 span{color:var(--tox);text-shadow:0 0 22px rgba(125,255,90,.45)}
+.hero p{margin:0;color:#c9cdf0;font-size:clamp(14px,1.6vw,18px);font-weight:600}
+
+/* лента карт */
+.sec-h{display:flex;align-items:baseline;gap:12px}
+.sec-h h2{margin:0;font-family:var(--f-display);font-size:18px;font-weight:600}
+.sec-h small{color:var(--muted);font-size:13px}
+.sec-h .arrows{margin-left:auto;display:flex;gap:6px}
+.arr{width:34px;height:34px;border-radius:10px;border:0;background:var(--panel);color:var(--fg);font-size:16px}
+.arr:hover{background:var(--panel-2)}
+.maps{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 2*16px)/3);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:8px 8px 10px;margin:-8px -8px -10px}
+.maps::-webkit-scrollbar{display:none}
+.map{scroll-snap-align:start;background:var(--panel);display:flex;flex-direction:column;min-width:0}
+.map .pic{aspect-ratio:16/10;max-width:100%;background:#000 center/cover no-repeat;position:relative}
+.map .num{position:absolute;top:10px;left:10px;font-size:11px;background:rgba(19,21,38,.85);padding:4px 8px;border-radius:6px}
+.map .cap{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:var(--c,var(--accent))}
+.map .cap b{font-family:var(--f-display);font-weight:600;font-size:15px;color:#fff}
+.map .cap i{font-style:normal;font-size:10px;color:rgba(255,255,255,.8)}
+
+/* администрация */
+.staff{display:flex;flex-direction:column;gap:14px}
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.st{background:var(--panel);padding:14px;display:flex;gap:12px;align-items:center;--cut:10px;min-width:0}
+.st > div{min-width:0}
+.st b{display:block;font-size:15px;overflow-wrap:anywhere}
+.av{flex:none;width:42px;height:42px;display:grid;place-items:center;background:var(--panel-2);font-family:var(--f-display);font-weight:800;font-size:18px;color:var(--accent-2);border-radius:10px}
+.st.own .av{background:var(--accent);color:#fff}
+.roles{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.r{font-size:9.5px;padding:3px 6px;border-radius:5px;background:var(--panel-2)}
+.r.c{background:#2a248f;color:#c9c6ff}
+.r.m{background:#4a1f2a;color:#ff9aa8}
+.r.j{background:#3d2c12;color:#ffc46b}
+.r.t{background:#16364a;color:#8fd3ff}
+.r.b{background:var(--tox-dim);color:var(--tox)}
+
+/* правая колонка */
+.box{background:var(--panel);padding:18px;display:flex;flex-direction:column;gap:12px}
+.box h3{margin:0;font-family:var(--f-display);font-size:15px;font-weight:600}
+.box .lbl{font-size:11px;color:var(--muted)}
+.join{background:var(--accent);--cut:16px}
+.join .lbl{color:#d6d4ff}
+.join-row{display:flex;align-items:stretch;gap:8px;background:#2a248f;padding:6px;border-radius:12px}
+.join-row code{flex:1;min-width:0;display:flex;align-items:center;padding:0 10px;font-family:var(--f-mono);font-weight:700;font-size:17px;color:#fff;user-select:all;overflow-wrap:anywhere}
+.copy{border:0;border-radius:9px;background:#fff;color:#1d1a6e;padding:10px 14px;font-size:12px;white-space:nowrap}
+.copy.ok{background:var(--tox);color:#10240b}
+.join p{margin:0;font-size:13px;color:#e3e1ff}
+
+.da{display:block;text-align:center;text-decoration:none;background:#f57d07;color:#fff;padding:14px;border-radius:12px;font-size:13px}
+.da:hover{background:#ff9326}
+.donate .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{background:var(--panel-2);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.opt b{font-size:13px}
+.opt span{font-size:12px;color:var(--muted)}
+.soon{align-self:flex-start;font-size:10px;padding:4px 8px;border-radius:6px;background:var(--tox-dim);color:var(--tox)}
+
+.news ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.news li{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.news li:last-child{border-bottom:0;padding-bottom:0}
+.news .meta{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--muted)}
+.news .ver{background:var(--panel-2);color:var(--fg);padding:3px 7px;border-radius:5px}
+.news b{font-size:14px}
+.news ul{margin:0;padding-left:18px;color:#c3c7e8;font-size:13px;display:flex;flex-direction:column;gap:2px}
+
+/* правила */
+.rules{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:0;background:var(--panel);overflow:hidden;--cut:20px}
+.rules .pic{background:#000 url(img/rules.jpg) center/cover no-repeat;min-height:260px}
+.rules .txt{padding:24px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.rules h2{margin:0;font-family:var(--f-display);font-size:20px;font-weight:600}
+.rules ol{margin:0;padding-left:26px;columns:2;column-gap:28px;font-size:13px;color:#c9cdf0}
+.rules li{break-inside:avoid;margin-bottom:6px}
+.rules li::marker{color:var(--accent-2);font-family:var(--f-mono);font-weight:700}
+.rules .red{color:var(--danger)}
+.warn{font-size:12px;color:var(--danger)}
+
+.foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;padding-top:6px}
+.foot a{color:var(--fg)}
+
+@media (max-width:920px){
+  .main{grid-template-columns:1fr}
+  .maps{grid-auto-columns:calc((100% - 16px)/2)}
+  .rules{grid-template-columns:1fr}
+  .rules .pic{min-height:180px}
+}
+@media (max-width:520px){
+  .maps{grid-auto-columns:82%}
+  .rules ol{columns:1}
+  .hero{aspect-ratio:4/5}
+  .hero-in{padding:18px}
+  .top .chip{margin-left:0}
+}
+@media (prefers-reduced-motion:no-preference){
+  .maps{scroll-behavior:smooth}
+  .map .pic{transition:filter .25s}
+  .map:hover .pic{filter:brightness(1.15)}
+  .map,.st,.box,.hero,.rules,.da,.copy,.arr{transition:transform .25s cubic-bezier(.2,.7,.3,1)}
+  .map:hover,.st:hover{transform:scale(1.04)}
+  .box:hover{transform:scale(1.02)}
+  .hero:hover,.rules:hover{transform:scale(1.012)}
+  .da:hover,.copy:hover,.arr:hover{transform:scale(1.06)}
+}
+</style>
+
+<style>body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="#top"><span class="bio">☣</span><span>Just<b>☣</b>Survival</span></a>
+  </header>
+
+  <div class="main" id="top">
+    <div class="left">
+      <section class="hero cut" aria-label="Just☣Survival">
+        <div class="hero-in">
+          <div class="tags mono"><span class="tag">JustMC · Креатив+</span><span class="tag light">Мир 11956</span></div>
+          <h1>Just<span>☣</span>Survival</h1>
+          <p>Переживи 10 волн или зарази всех. Люди строят баррикады и отстреливаются, зомби охотятся и заражают.</p>
+        </div>
+      </section>
+
+      <section id="maps" class="left" style="gap:14px">
+        <div class="sec-h">
+          <h2>Карты</h2><small>8 карт · голосование в лобби</small>
+          <div class="arrows"><button class="arr" id="prev" aria-label="Назад">‹</button><button class="arr" id="next" aria-label="Вперёд">›</button></div>
+        </div>
+        <div class="maps" id="mapRow">
+          <article class="map cut"><div class="pic" style="background-image:url(img/suburb.jpg)"><span class="num mono">.карта 1</span></div><div class="cap" style="--c:#5b54f2"><b>Лаборатория</b></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/forest.jpg)"><span class="num mono">.карта 2</span></div><div class="cap" style="--c:#2f9e5b"><b>Лес</b><i class="mono">ночь, озеро</i></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/city.jpg)"><span class="num mono">.карта 3</span></div><div class="cap" style="--c:#3a7bd5"><b>Город</b><i class="mono">улицы</i></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/base.jpg)"><span class="num mono">.карта 4</span></div><div class="cap" style="--c:#c2453f"><b>Военная база</b><i class="mono">периметр</i></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/mall.jpg)"><span class="num mono">.карта 5</span></div><div class="cap" style="--c:#b0459e"><b>Пригород</b></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/lighthouse.jpg)"><span class="num mono">.карта 6</span></div><div class="cap" style="--c:#d08a1f"><b>Маяк</b><i class="mono">общий спавн</i></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/lab.jpg)"><span class="num mono">.карта 7</span></div><div class="cap" style="--c:#1f9aa8"><b>ТЦ</b></div></article>
+          <article class="map cut"><div class="pic" style="background-image:url(img/sewer.jpg)"><span class="num mono">.карта 8</span></div><div class="cap" style="--c:#3f7a2a"><b>Канализация</b><i class="mono">новая</i></div></article>
+        </div>
+      </section>
+
+      <section class="staff" id="staff">
+        <div class="sec-h"><h2>Администрация</h2><small>7 человек</small></div>
+        <div class="staff-grid">
+          <div class="st cut own"><span class="av">F</span><div><b>FoxyFine11</b><div class="roles mono"><span class="r c">Кодер</span><span class="r m">Модератор</span><span class="r t">Тестер</span><span class="r b">Билдер</span></div></div></div>
+          <div class="st cut"><span class="av">S</span><div><b>sky_want</b><div class="roles mono"><span class="r m">Модератор</span><span class="r t">Тестер</span><span class="r b">Билдер</span></div></div></div>
+          <div class="st cut"><span class="av">T</span><div><b>temaNEzetnik</b><div class="roles mono"><span class="r m">Модератор</span><span class="r b">Билдер</span></div></div></div>
+          <div class="st cut"><span class="av">H</span><div><b>HARDghjR</b><div class="roles mono"><span class="r m">Модератор</span><span class="r b">Билдер</span></div></div></div>
+          <div class="st cut"><span class="av">L</span><div><b>Lavemen1078</b><div class="roles mono"><span class="r j">Мл. модератор</span></div></div></div>
+          <div class="st cut"><span class="av">W</span><div><b>wontiz1</b><div class="roles mono"><span class="r j">Мл. модератор</span></div></div></div>
+          <div class="st cut"><span class="av">F</span><div><b>Faxae</b><div class="roles mono"><span class="r j">Мл. модератор</span></div></div></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="box join cut">
+        <span class="lbl mono">Как зайти</span>
+        <div class="join-row"><code id="joinCmd">/join 11956</code><button class="copy mono" id="copyBtn">Копировать</button></div>
+        <p>Зайди на сервер JustMC, введи команду в чат и нажми зелёный краситель в лобби.</p>
+      </section>
+
+      <section class="box donate cut">
+        <h3>Поддержать мир</h3>
+        <a class="da mono" id="daBtn" href="https://www.donationalerts.com/r/js_project" target="_blank" rel="noopener">Задонатить на DonationAlerts</a>
+      </section>
+
+      <section class="box news cut" id="news">
+        <h3>Новости мира</h3>
+        <ol>
+          <li><div class="meta mono"><span class="ver">v33</span>05.11.2026</div><b>Канализация и декор</b>
+            <ul><li>Новая карта Канализация, ТЦ теперь в голосовании</li><li>Вкладка «Декор» в магазине: блоки ломаются с 2 ударов</li><li>Эндерняковый забор, 85 HP</li><li>Нет лимита на число баррикад</li></ul></li>
+          <li><div class="meta mono"><span class="ver">v32</span>Классы</div><b>Военный, Гражданский, Медик</b>
+            <ul><li>Медик возвращает зомби в люди дефибриллятором</li><li>Броня от выстрелов и ударов, до 35%</li><li>Маяк, туман на всех картах</li></ul></li>
+          <li><div class="meta mono"><span class="ver">v31</span>Баррикады</div><b>Проход и ремонт</b>
+            <ul><li>Shift + ПКМ — пройти сквозь баррикаду товарища</li><li>Железный топор чинит блоки</li></ul></li>
+        </ol>
+      </section>
+    </aside>
+  </div>
+
+  <section class="rules cut" id="rules">
+    <div class="pic" role="img" aria-label="Табличка с правилами в лобби"></div>
+    <div class="txt">
+      <h2>Правила</h2>
+      <ol>
+        <li>Уважай игроков: без оскорблений и токсичности.</li>
+        <li>Без капса и рекламы других миров и серверов.</li>
+        <li>Запрещены читы и моды на преимущество.</li>
+        <li>Нельзя использовать баги — сообщи о них создателю.</li>
+        <li><span class="red">Скайкейд запрещён</span>: сначала кик, затем бан на день.</li>
+        <li>Не ломай чужие баррикады и не замуровывай своих.</li>
+        <li>Переданные товарищу предметы — подарок.</li>
+        <li>Зомби: не стой АФК на спавне.</li>
+        <li>Зомби: не помогай выжившим.</li>
+        <li>Не выходи специально, чтобы сорвать победу.</li>
+        <li>Тиминг выживших с зомби запрещён.</li>
+        <li>Решение создателя мира — окончательное.</li>
+      </ol>
+      <div class="warn mono">Предупреждение → кик → бан в мире</div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Just☣Survival — мир на JustMC (Креатив+). Не связан с администрацией JustMC.</span>
+    <a href="https://discord.gg/a4VT4hbbmD" target="_blank" rel="noopener">Наш Discord →</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyBtn'), code=document.getElementById('joinCmd');
+  function done(){btn.textContent='Скопировано';btn.classList.add('ok');setTimeout(function(){btn.textContent='Копировать';btn.classList.remove('ok')},1600)}
+  function fallback(){try{var r=document.createRange();r.selectNodeContents(code);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Выделено, Ctrl+C'}catch(e){}}
+  btn.addEventListener('click',function(){
+    try{navigator.clipboard.writeText(code.textContent).then(done,fallback)}catch(e){fallback()}
+  });
+  var row=document.getElementById('mapRow');
+  function step(){var c=row.querySelector('.map');return c?c.getBoundingClientRect().width+16:300}
+  document.getElementById('prev').addEventListener('click',function(){row.scrollBy({left:-step()})});
+  document.getElementById('next').addEventListener('click',function(){row.scrollBy({left:step()})});
+})();
+</script>
+
+</body>
+</html>
